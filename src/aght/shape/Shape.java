@@ -19,7 +19,7 @@ public class Shape extends SVGPath {
         this.setContent(svgPath);
         this.vertices = vertices;
     }
-    
+
     protected Shape(Vector2d[] vertices, String svgPath, Vector2d layout) {
         setLayoutPosition(layout.negate());
         this.setContent(svgPath);
@@ -28,15 +28,14 @@ public class Shape extends SVGPath {
 
     public Vector2d[] getVertices() {
         ArrayList<Double> temp = new ArrayList<Double>();
-        double[] xy = new double[vertices.length * 2];
 
         for (Vector2d vertex : vertices) {
             temp.add(vertex.x);
             temp.add(vertex.y);
         }
-        
-        xy = temp.stream().mapToDouble(Double::doubleValue).toArray();
-        
+
+        double[] xy = temp.stream().mapToDouble(Double::doubleValue).toArray();
+
         this.getLocalToParentTransform().transform2DPoints(xy, 0, xy, 0,
                 xy.length / 2);
 
@@ -62,12 +61,12 @@ public class Shape extends SVGPath {
 
         return transformed;
     }
-    
+
     private void setLayoutPosition(Vector2d pos) {
         setLayoutX(pos.x);
         setLayoutY(pos.y);
     }
-    
+
     public void setX(double x) {
         this.setTranslateX(x);
     }
@@ -83,11 +82,11 @@ public class Shape extends SVGPath {
     public double getY() {
         return this.getTranslateY();
     }
-    
+
     public void setVertices(Vector2d[] n) {
         vertices = n;
     }
-    
+
     public void rotate(double angle) {
         setRotate(angle);
     }

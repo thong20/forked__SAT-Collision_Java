@@ -1,5 +1,6 @@
 package aght;
 
+import aght.collision.SAT;
 import aght.math.Vector2d;
 import aght.shape.Polygon;
 import javafx.animation.AnimationTimer;
@@ -19,38 +20,56 @@ import javafx.stage.Stage;
  */
 public class Main extends Application {
 
-    final static int width = 1280;
-    final static int height = 768;
+    private final static int WIDTH = 768;
+    private final static int HEIGHT = 480;
 
-    Polygon p = Polygon.fromVertices(new Vector2d[] {
-        new Vector2d(100, 100),
-        new Vector2d(150, 125),
-        new Vector2d(200, 100),
-        new Vector2d(200, 200),
-        new Vector2d(100, 200)
+    private Group root;
+
+    private Scene scene;
+
+    private Color clearColor = Color.rgb(51, 51, 51);
+    private Color hitClearColor = Color.LIGHTCORAL;
+
+    private Polygon star = Polygon.fromVertices(new Vector2d[]{
+            new Vector2d(0, -50),
+            new Vector2d(14, -20),
+            new Vector2d(47, -15),
+            new Vector2d(23, 7),
+            new Vector2d(29, 40),
+            new Vector2d(0, 25),
+            new Vector2d(-29, 40),
+            new Vector2d(-23, 7),
+            new Vector2d(-47, -15),
+            new Vector2d(-14, -20)
     });
 
-    Polygon p2 = Polygon.fromVertices(new Vector2d[] {
-        new Vector2d(100, 100),
-        new Vector2d(150, 125),
-        new Vector2d(200, 100),
-        new Vector2d(200, 200),
-        new Vector2d(100, 200)
+    private Polygon letterH = Polygon.fromVertices(new Vector2d[]{
+            new Vector2d(0, 0),
+            new Vector2d(10, 0),
+            new Vector2d(10, 20),
+            new Vector2d(20, 20),
+            new Vector2d(20, 0),
+            new Vector2d(30, 0),
+            new Vector2d(30, 50),
+            new Vector2d(20, 50),
+            new Vector2d(20, 30),
+            new Vector2d(10, 30),
+            new Vector2d(10, 50),
+            new Vector2d(0, 50)
     });
 
-    Group root;
+    public void start(Stage stage) {
+        star.setFill(Color.LIGHTBLUE);
+        letterH.setFill(Color.DEEPSKYBLUE);
 
-    Scene scene;
+        root = new Group(star, letterH);
 
-    public void start(Stage stage) throws Exception {
-        p.setFill(Color.LIGHTBLUE);
+        letterH.setX(WIDTH / 2);
+        letterH.setY(HEIGHT / 2);
+        letterH.setScaleX(2.5);
+        letterH.setScaleY(2);
 
-        root = new Group(p, p2);
-
-        p2.setX(width / 2);
-        p2.setY(height / 2);
-
-        scene = new Scene(root, width, height, Color.rgb(51, 51, 51));
+        scene = new Scene(root, WIDTH, HEIGHT, Color.rgb(51, 51, 51));
 
         scene.setOnMouseMoved(this::handleMouseMoved);
         scene.setOnScroll(this::handleOnScroll);
@@ -63,27 +82,26 @@ public class Main extends Application {
 
             @Override
             public void handle(long now) {
-                scene.setFill(Color.rgb(51, 51, 51));
+                scene.setFill(clearColor);
 
-                if (SAT.collide(p2, p)) {
-                    scene.setFill(Color.LIGHTCORAL);
+                if (SAT.collide(letterH, star)) {
+                    scene.setFill(hitClearColor);
                 }
             }
 
         }.start();
     }
 
-    public void handleOnScroll(ScrollEvent e) {}
+    public void handleOnScroll(ScrollEvent e) {
+        star.rotate(star.getRotate() + e.getDeltaY() * 0.1);
+    }
 
     public void handleMouseMoved(MouseEvent e) {
-        p.setX(e.getX());
-        p.setY(e.getY());
+        star.setX(e.getX());
+        star.setY(e.getY());
     }
 
     public static void main(String[] args) {
-        Vector2d v = new Vector2d(22, 63);
-        Vector2d v2 = new Vector2d(55, 110.63);
-        System.out.println(v.dot(v2));
         launch(args);
     }
 

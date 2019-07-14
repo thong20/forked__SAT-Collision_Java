@@ -24,13 +24,13 @@ public class Polygon extends Shape {
         setTranslateY(y);
         isConvex = true;
     }
-    
+
     private Polygon(Vector2d[] vertices, Vector2d layout) {
         super(vertices, createSVGPath(vertices), layout);
 
         isConvex = checkIfConvex();
     }
-    
+
     private static Vector2d[] generateEvenPoly(double radius, double sides) {
         ArrayList<Vector2d> vertices = new ArrayList<Vector2d>();
 
@@ -43,52 +43,45 @@ public class Polygon extends Shape {
 
         return vertices.toArray(new Vector2d[vertices.size()]);
     }
-    
+
     public static Polygon fromVertices(Vector2d[] v) {
         Vector2d centroid = centerOfMass(v);
-        
+
         return new Polygon(v, centroid);
     }
-    
+
     public static Vector2d centerOfMass(Vector2d[] vertices) {
         double cx = 0;
         double cy = 0;
-        
+
         double area = area(vertices);
-
-        int i, j, n = vertices.length;
-
         double factor = 0;
-        for (i = 0; i < n; i++) {
-            
-            j = (i + 1) % n;
-            
-            factor = (vertices[i].getX() * vertices[j].getY()
-                    - vertices[j].getX() * vertices[i].getY());
-            
+
+        for (int i = 0; i < vertices.length; i++) {
+
+            int j = (i + 1) % vertices.length;
+
+            factor = (vertices[i].getX() * vertices[j].getY() - vertices[j].getX() * vertices[i].getY());
+
             cx += (vertices[i].getX() + vertices[j].getX()) * factor;
             cy += (vertices[i].getY() + vertices[j].getY()) * factor;
         }
-        
-        area *= 6;
-        factor = 1 / area;
-        cx *= factor;
-        cy *= factor;
-        
-        return new Vector2d(cx, cy);
+
+        factor = 1 / (area * 6);
+
+        return new Vector2d(cx * factor, cy * factor);
     }
-    
+
     private static double area(Vector2d[] vertices) {
-        int i, j, n = vertices.length;
         double area = 0;
 
-        for (i = 0; i < n; i++) {
-            j = (i + 1) % n;
+        for (int i = 0; i < vertices.length; i++) {
+            int j = (i + 1) % vertices.length;
             area += vertices[i].getX() * vertices[j].getY();
             area -= vertices[j].getX() * vertices[i].getY();
         }
-        area /= 2.0;
-        return area;
+
+        return area / 2.0;
     }
 
     private static String createSVGPath(Vector2d[] vertices) {
@@ -130,7 +123,7 @@ public class Polygon extends Shape {
     }
 
     public static Polygon createRandomPolygon(double x, double y, double radius,
-            double n) {
+                                              double n) {
 
         Random r = new Random();
         ArrayList<Vector2d> vertices = new ArrayList<Vector2d>();
